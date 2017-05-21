@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/btnSettings"
+        android:icon="@android:drawable/ic_menu_set_as"
+        app:showAsAction="ifRoom"
+        android:title=""
+        >
+    </item>
+    <item
+        android:id="@+id/btnClose"
+        android:icon="@android:drawable/ic_menu_close_clear_cancel"
+        app:showAsAction="ifRoom"
+        android:visible="false"
+        >
+    </item>
+</menu>
