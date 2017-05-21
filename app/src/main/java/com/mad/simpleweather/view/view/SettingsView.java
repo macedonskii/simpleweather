@@ -4,7 +4,7 @@ import com.mad.simpleweather.model.data.CityListItem;
 
 import java.util.List;
 
-public interface SettingsView {
+public interface SettingsView extends View {
 
     void onDataSaved();
 

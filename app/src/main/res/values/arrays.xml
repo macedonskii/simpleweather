@@ -3,12 +3,12 @@
     <string-array name="cities">
         <item>Dnipro</item>
         <item>Kharkiv</item>
-        <item>Zaporizhia</item>
+        <item>Zaporizhzhya</item>
     </string-array>
     <integer-array name="cities_id">
         <!--todo CHANGE ID TO VALID DATA-->
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
+        <item>709930</item>
+        <item>706483</item>
+        <item>687700</item>
     </integer-array>
 </resources>

@@ -3,6 +3,7 @@ package com.mad.simpleweather.model.storage;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.support.annotation.Nullable;
 
 import com.google.gson.Gson;
 import com.mad.simpleweather.model.api.response.Data;
@@ -12,7 +13,7 @@ import com.mad.simpleweather.model.data.containers.WeathersContainer;
 
 public class DatabaseImpl implements Database {
     private static final String LAST_UPDATE_TIME = "TIME";
-    private static final String WEATHER = "TIME";
+    private static final String WEATHER = "WEATHER";
 
     private SharedPreferences mPreferences;
 
@@ -21,13 +22,14 @@ public class DatabaseImpl implements Database {
     }
 
     @Override
+    @Nullable
     public CityWeather getCurrentWeather() {
         WeathersContainer weather = getWeather();
-        Data currentWeather = weather.getCurrentWeather();
-        if (currentWeather == null) {
-            throw new NullPointerException(new Gson().toJson(currentWeather));
+        if (weather == null || weather.getCurrentWeather() == null) {
+            return null;
         }
-        return new CityWeather(currentWeather.getWeather().get(0).getDescription(),
+        Data currentWeather = weather.getCurrentWeather();
+        return new CityWeather(String.format("%s in\n%s",currentWeather.getWeather().get(0).getDescription(),currentWeather.getName()),
                 currentWeather.getWeather().get(0).getIcon(),
                 currentWeather.getMain().getTempMin(),
                 currentWeather.getMain().getTempMax(),
@@ -61,7 +63,9 @@ public class DatabaseImpl implements Database {
 
     private WeathersContainer getWeather() {
         Gson gson = new Gson();
-        return gson.fromJson(mPreferences.getString(WEATHER, ""), WeathersContainer.class);
+        String string = mPreferences.getString(WEATHER, "");
+        WeathersContainer weathersContainer = gson.fromJson(string, WeathersContainer.class);
+        return weathersContainer == null ? new WeathersContainer() : weathersContainer;
     }
     private void setWeather(WeathersContainer container) {
         Gson gson = new Gson();

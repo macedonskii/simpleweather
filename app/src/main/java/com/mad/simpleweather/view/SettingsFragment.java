@@ -11,6 +11,7 @@ import android.view.View;
 import com.mad.simpleweather.R;
 import com.mad.simpleweather.databinding.FragmentSettingsBinding;
 import com.mad.simpleweather.model.data.CityListItem;
+import com.mad.simpleweather.presenter.AbstractPresenter;
 import com.mad.simpleweather.presenter.SettingsPresenter;
 import com.mad.simpleweather.presenter.adapters.SettingsAdapter;
 import com.mad.simpleweather.view.view.SettingsView;
@@ -60,5 +61,10 @@ public class SettingsFragment extends AbstractFragment implements SettingsView {
     @Override
     public void setList(List<CityListItem> items) {
         mAdapter.setItems(items);
+    }
+
+    @Override
+    public AbstractPresenter getPresenter() {
+        return mPresenter;
     }
 }

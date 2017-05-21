@@ -11,8 +11,7 @@ import java.util.List;
 public class WeathersContainer {
 
     private List<Data> mList = new ArrayList<>();
-    //TODO change to 1 ID
-    private int position = 0;
+    private int position = 709930;
 
     public List<Data> getList() {
         return mList;

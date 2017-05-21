@@ -26,15 +26,15 @@ public class CityWeather {
         return icon;
     }
 
-    public int getTemperatureMin() {
-        return temperatureMin;
+    public String getTemperatureMin() {
+        return temperatureMin < 0 ? String.valueOf(temperatureMin) : String.format("+%d", temperatureMin);
     }
 
-    public int getTemperatureMax() {
-        return temperatureMax;
+    public String getTemperatureMax() {
+        return temperatureMax < 0 ? String.valueOf(temperatureMax) : String.format("+%d",temperatureMax);
     }
 
-    public int getTemperatureAverage() {
-        return temperatureAverage;
+    public String getTemperatureAverage() {
+        return temperatureAverage < 0 ? String.valueOf(temperatureAverage) : String.format("+%d",temperatureAverage);
     }
 }

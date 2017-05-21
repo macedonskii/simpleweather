@@ -5,4 +5,6 @@ package com.mad.simpleweather.view.view;
  */
 
 public interface View {
+    void onError(Throwable error);
+
 }

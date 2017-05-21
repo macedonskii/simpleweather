@@ -12,7 +12,9 @@ public class ApiProvider {
     public static ApiInterface getApi(){
         OkHttpClient.Builder mBuilder = new OkHttpClient.Builder();
 
-        mBuilder.addInterceptor(new HttpLoggingInterceptor(HttpLoggingInterceptor.Logger.DEFAULT));
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        mBuilder.addInterceptor(interceptor);
 
         Retrofit.Builder builder = new Retrofit.Builder()
                 .baseUrl("http://api.openweathermap.org")

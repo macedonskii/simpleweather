@@ -1,9 +1,15 @@
 package com.mad.simpleweather.model;
 
+import android.content.Context;
+import android.support.annotation.Nullable;
+
 import com.mad.simpleweather.App;
+import com.mad.simpleweather.R;
 import com.mad.simpleweather.model.api.ApiInterface;
 import com.mad.simpleweather.model.data.CityWeather;
 import com.mad.simpleweather.model.storage.Database;
+
+import java.util.Arrays;
 
 import javax.inject.Inject;
 
@@ -11,7 +17,7 @@ import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-public class ModelImpl implements AppModel {
+public class ModelImpl implements Model {
 
     private static final int SECOND = 1000;
     private static final int MINUTE = SECOND * 60;
@@ -24,19 +30,25 @@ public class ModelImpl implements AppModel {
     Database mDatabase;
     @Inject
     ApiInterface mApi;
+    @Inject
+    Context mContext;
 
     public ModelImpl() {
         App.getGraph().inject(this);
     }
 
     @Override
+    @Nullable
     public Observable<CityWeather> getWeather() {
-        return null;
+        return Observable.just(mDatabase.getCurrentWeather());
     }
 
     @Override
     public Observable<Boolean> setCurrentWeather(int i) {
-        return null;
+        return Observable.just(mDatabase).map(database -> {
+            database.setCurrentCity(i);
+            return true;
+        });
     }
 
     @Override
@@ -56,7 +68,12 @@ public class ModelImpl implements AppModel {
     }
 
     private Observable<Long> loadWeather() {
-        return mApi.getWeather(CITIES, "metric", "b1b15e88fa797225412429c1c50c122a1").map(asd -> {
+        StringBuilder str = new StringBuilder();
+        for (int city : mContext.getResources().getIntArray(R.array.cities_id)) {
+            str.append(city).append(",");
+        }
+        str.deleteCharAt(str.length() - 1);
+        return mApi.getWeather("metric", "366a16719c97c87cb1b3d62d04f1b0b4", str.toString()).map(asd -> {
             if (!asd.isSuccessful()) {
                 return 0L;
             }

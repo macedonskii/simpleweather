@@ -11,6 +11,8 @@ import com.mad.simpleweather.view.view.SettingsView;
 import java.util.ArrayList;
 import java.util.List;
 
+import rx.Subscription;
+
 public class SettingsPresenter extends AbstractPresenter implements SettingsAdapter.SettingsClickListener {
     private final SettingsView mView;
 
@@ -21,7 +23,8 @@ public class SettingsPresenter extends AbstractPresenter implements SettingsAdap
 
     @Override
     public void onClick(CityListItem item) {
-
+        Subscription subscribe = mModel.setCurrentWeather(item.getId()).subscribe(aBoolean -> mView.onDataSaved(), mView::onError);
+        mCompositeSubscription.add(subscribe);
     }
 
     public void onCreateView() {

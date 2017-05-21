@@ -1,7 +1,7 @@
 package com.mad.simpleweather.other;
 
 
-import com.mad.simpleweather.model.AppModel;
+import com.mad.simpleweather.model.Model;
 import com.mad.simpleweather.model.ModelImpl;
 
 import javax.inject.Singleton;
@@ -13,7 +13,7 @@ import dagger.Provides;
 public class PresenterModule {
     @Provides
     @Singleton
-    public AppModel provideModel(){
+    public Model provideModel(){
         return new ModelImpl();
     }
 }

@@ -3,13 +3,11 @@ package com.mad.simpleweather.other;
 
 import android.content.Context;
 
-import com.mad.simpleweather.model.AppModel;
 import com.mad.simpleweather.model.api.ApiInterface;
 import com.mad.simpleweather.model.api.ApiProvider;
 import com.mad.simpleweather.model.storage.Database;
 import com.mad.simpleweather.model.storage.DatabaseImpl;
 
-import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import dagger.Module;
@@ -36,4 +34,9 @@ public class ModelModule {
         return ApiProvider.getApi();
     }
 
+    @Provides
+    @Singleton
+    public Context provideContext(){
+        return mContext;
+    }
 }

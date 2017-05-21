@@ -1,4 +1,7 @@
 package com.mad.simpleweather.view.view;
 
-public interface WeatherView {
+import com.mad.simpleweather.model.data.CityWeather;
+
+public interface WeatherView extends View{
+    void setWeather(CityWeather cityWeather);
 }

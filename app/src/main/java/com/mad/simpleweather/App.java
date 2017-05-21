@@ -6,6 +6,7 @@ import android.content.Context;
 import com.mad.simpleweather.model.storage.DatabaseImpl;
 import com.mad.simpleweather.other.AppComponents;
 import com.mad.simpleweather.other.DaggerAppComponents;
+import com.mad.simpleweather.other.ModelModule;
 
 /**
  * Created by mad on 21.05.2017.
@@ -28,8 +29,7 @@ public class App extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        sGraph = DaggerAppComponents.builder().build();
-        DatabaseImpl.init(this);
+        sGraph = DaggerAppComponents.builder().modelModule(new ModelModule(this)).build();
         sContext = this;
     }
 }

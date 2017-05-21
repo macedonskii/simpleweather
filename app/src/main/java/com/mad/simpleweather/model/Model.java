@@ -1,5 +1,7 @@
 package com.mad.simpleweather.model;
 
+import android.support.annotation.Nullable;
+
 import com.mad.simpleweather.model.data.CityWeather;
 
 import rx.Observable;
@@ -8,11 +10,12 @@ import rx.Observable;
  * Created by mad on 21.05.2017.
  */
 
-public interface AppModel {
+public interface Model {
 
     /**
      * @return Weather to show or null if weather wasn't updated
      */
+    @Nullable
     Observable<CityWeather> getWeather();
 
     /**
