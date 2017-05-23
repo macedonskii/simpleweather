@@ -1,20 +1,24 @@
 package com.mad.simpleweather;
 
+import android.app.AlarmManager;
 import android.app.Application;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.provider.Settings;
 
 import com.mad.simpleweather.model.storage.DatabaseImpl;
 import com.mad.simpleweather.other.AppComponents;
 import com.mad.simpleweather.other.DaggerAppComponents;
 import com.mad.simpleweather.other.ModelModule;
 
-/**
- * Created by mad on 21.05.2017.
- */
+import java.util.Calendar;
+
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
 
 public class App extends Application {
-
-    private static Context sContext;
 
     private static AppComponents sGraph;
 
@@ -22,14 +26,30 @@ public class App extends Application {
         return sGraph;
     }
 
-    public static Context getContext(){
-        return sContext;
-    }
-
     @Override
     public void onCreate() {
         super.onCreate();
         sGraph = DaggerAppComponents.builder().modelModule(new ModelModule(this)).build();
-        sContext = this;
+        Realm.init(this);
+        RealmConfiguration configuration = new RealmConfiguration.Builder().deleteRealmIfMigrationNeeded().build();
+        Realm.setDefaultConfiguration(configuration);
+        firstStart();
+    }
+
+    private void firstStart() {
+        SharedPreferences appPreferences = getSharedPreferences("AppPreferences", MODE_PRIVATE);
+        if (appPreferences.getBoolean("first_start", true)) {
+            AlarmManager manager = (AlarmManager) getSystemService(ALARM_SERVICE);
+
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTimeInMillis(System.currentTimeMillis() + 1000);
+
+            Intent intent = new Intent(this, AlarmReceiver.class);
+            PendingIntent broadcast = PendingIntent.getBroadcast(this, 0, intent, 0);
+
+            manager.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),AlarmManager.INTERVAL_HALF_HOUR, broadcast);
+//            manager.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 1000 * 15, broadcast);
+            appPreferences.edit().putBoolean("first_start", false).apply();
+        }
     }
 }

@@ -6,10 +6,12 @@ import android.support.annotation.Nullable;
 import com.mad.simpleweather.App;
 import com.mad.simpleweather.R;
 import com.mad.simpleweather.model.api.ApiInterface;
+import com.mad.simpleweather.model.data.CityItem;
 import com.mad.simpleweather.model.data.CityWeather;
 import com.mad.simpleweather.model.storage.Database;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -52,19 +54,20 @@ public class ModelImpl implements Model {
     }
 
     @Override
-    public Observable<Long> updateWeather(boolean isImmediatelyUpdate) {
-        if (isImmediatelyUpdate) {
-            return loadWeather().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
-        } else {
-            return Observable.just(mDatabase).flatMap(database -> {
-                long lastUpdateTime = database.getLastUpdateTime();
-                long l = System.currentTimeMillis();
-                if (l - lastUpdateTime > TIME_TO_UPDATE) {
-                    return loadWeather().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
-                }
-                return Observable.just(0L);
-            });
-        }
+    public Observable<Long> updateWeather() {
+        return loadWeather().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+    }
+
+    @Override
+    public Observable<List<CityItem>> getCityList() {
+        return Observable.zip(Observable.just(mContext.getResources().getStringArray(R.array.cities)),
+                Observable.just(mContext.getResources().getIntArray(R.array.cities_id)), (strings, ints) -> {
+                    List<CityItem> items = new ArrayList<>();
+                    for (int i = 0; i < strings.length; i++) {
+                        items.add(new CityItem(strings[i], ints[i]));
+                    }
+                    return items;
+                });
     }
 
     private Observable<Long> loadWeather() {
@@ -74,11 +77,11 @@ public class ModelImpl implements Model {
         }
         str.deleteCharAt(str.length() - 1);
         return mApi.getWeather("metric", "366a16719c97c87cb1b3d62d04f1b0b4", str.toString()).map(asd -> {
+            long l = System.currentTimeMillis();
             if (!asd.isSuccessful()) {
-                return 0L;
+                return l + 2 * MINUTE;
             }
             mDatabase.setWeather(asd.body());
-            long l = System.currentTimeMillis();
             mDatabase.setLastUpdateTime(l);
             return l + TIME_TO_UPDATE;
         });

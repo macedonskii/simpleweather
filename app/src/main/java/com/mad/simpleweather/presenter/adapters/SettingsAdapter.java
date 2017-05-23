@@ -10,18 +10,18 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.mad.simpleweather.R;
-import com.mad.simpleweather.model.data.CityListItem;
+import com.mad.simpleweather.model.data.CityItem;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.SettingsHolder> {
 
-    private List<CityListItem> mItems = new ArrayList<>();
+    private List<CityItem> mItems = new ArrayList<>();
     private Context mContext;
     private SettingsClickListener mListener;
 
-    public SettingsAdapter(@NonNull List<CityListItem> item, @NonNull Context context, @NonNull SettingsClickListener listener) {
+    public SettingsAdapter(@NonNull List<CityItem> item, @NonNull Context context, @NonNull SettingsClickListener listener) {
         this.mItems = item;
         mContext = context;
         mListener = listener;
@@ -43,7 +43,7 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.Settin
         return mItems != null ? mItems.size() : 0;
     }
 
-    public void setItems(@NonNull List<CityListItem> items) {
+    public void setItems(@NonNull List<CityItem> items) {
         mItems.clear();
         mItems.addAll(items);
         notifyDataSetChanged();
@@ -59,6 +59,6 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.Settin
     }
 
     public interface SettingsClickListener {
-        void onClick(CityListItem item);
+        void onClick(CityItem item);
     }
 }

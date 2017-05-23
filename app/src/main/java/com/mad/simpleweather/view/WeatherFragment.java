@@ -36,10 +36,16 @@ public class WeatherFragment extends AbstractFragment implements WeatherView {
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        mPresenter.onPause();
+    }
+
+    @Override
     public void setWeather(CityWeather cityWeather) {
         if (cityWeather == null) {
             mBinding.btnReload.setVisibility(View.VISIBLE);
-            Toast.makeText(getActivity(), "Smth wrong", Toast.LENGTH_LONG).show();
+            Toast.makeText(getActivity(), R.string.error_weather_update, Toast.LENGTH_LONG).show();
             return;
         }
         mBinding.btnReload.setVisibility(View.INVISIBLE);
@@ -48,7 +54,6 @@ public class WeatherFragment extends AbstractFragment implements WeatherView {
         mBinding.tvMax.setText(cityWeather.getTemperatureMax());
         mBinding.tvTemperatureMin.setText(cityWeather.getTemperatureMin());
         Glide.with(this).load(cityWeather.getIcon()).into(mBinding.ivIcon);
-        // TODO: 21.05.2017 ADD GLIDE TO LOAD ICONS!
     }
 
     @Override

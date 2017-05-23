@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCallback 
     @Override
     public void closeSettingsFragment() {
         getSupportFragmentManager().popBackStack();
+        invalidateOptionsMenu();
     }
 
     @Override

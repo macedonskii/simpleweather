@@ -1,40 +1,49 @@
 package com.mad.simpleweather.model.data;
 
 
-public class CityWeather {
+import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
 
-    private String description;
-    private String icon;
-    private int temperatureMin;
-    private int temperatureMax;
-    private int temperatureAverage;
+public class CityWeather extends RealmObject {
 
-    public CityWeather(String description, String icon, int temperatureMin, int temperatureMax, int temperatureAverage) {
-        this.description = description;
-        this.icon = String.format("http://openweathermap.org/img/w/%s.png",icon);
-        this.temperatureMin = temperatureMin;
-        this.temperatureMax = temperatureMax;
-        this.temperatureAverage = temperatureAverage;
+    @PrimaryKey
+    private int mId;
+    private String mDescription;
+    private String mIcon;
+    private double mTemperatureMin;
+    private double mTemperatureMax;
+    private double mTemperatureAverage;
+
+    public CityWeather() {
+    }
+
+    public CityWeather(String description, String icon, double temperatureMin, double temperatureMax, double temperatureAverage, int id) {
+        mDescription = description;
+        mIcon = String.format("http://openweathermap.org/img/w/%s.png", icon);
+        mTemperatureMin = temperatureMin;
+        mTemperatureMax = temperatureMax;
+        mTemperatureAverage = temperatureAverage;
+        mId = id;
     }
 
 
     public String getDescription() {
-        return description;
+        return mDescription;
     }
 
     public String getIcon() {
-        return icon;
+        return mIcon;
     }
 
     public String getTemperatureMin() {
-        return temperatureMin < 0 ? String.valueOf(temperatureMin) : String.format("+%d", temperatureMin);
+        return mTemperatureMin < 0 ? String.valueOf(mTemperatureMin) : String.format("+%d", (int) mTemperatureMin);
     }
 
     public String getTemperatureMax() {
-        return temperatureMax < 0 ? String.valueOf(temperatureMax) : String.format("+%d",temperatureMax);
+        return mTemperatureMax < 0 ? String.valueOf(mTemperatureMax) : String.format("+%d", (int) mTemperatureMax);
     }
 
     public String getTemperatureAverage() {
-        return temperatureAverage < 0 ? String.valueOf(temperatureAverage) : String.format("+%d",temperatureAverage);
+        return mTemperatureAverage < 0 ? String.valueOf(mTemperatureAverage) : String.format("+%d", (int) mTemperatureAverage);
     }
 }

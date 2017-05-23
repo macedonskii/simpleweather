@@ -1,12 +1,12 @@
 package com.mad.simpleweather.model.data;
 
 
-public class CityListItem {
+public class CityItem {
 
     private String city;
     private int id;
 
-    public CityListItem(String city, int id) {
+    public CityItem(String city, int id) {
         this.city = city;
         this.id = id;
     }

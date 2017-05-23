@@ -13,8 +13,8 @@
         android:minHeight="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
         app:titleTextColor="@android:color/white"
-
         >
+
     </android.support.v7.widget.Toolbar>
     <RelativeLayout
         android:id="@+id/root"

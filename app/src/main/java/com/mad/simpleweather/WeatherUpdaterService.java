@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.mad.simpleweather.model.Model;
 
@@ -15,14 +16,13 @@ import rx.subscriptions.CompositeSubscription;
 
 public class WeatherUpdaterService extends Service {
 
-    // TODO: 21.05.2017 Restart service && broadcasts
-
     private final String TAG = getClass().getSimpleName();
-    public static void startService(Context context, boolean isImmediately){
+
+    public static void startService(Context context) {
         Intent intent = new Intent(context, WeatherUpdaterService.class);
-        intent.putExtra("",isImmediately);
         context.startService(intent);
     }
+
     @Inject
     Model mModel;
 
@@ -35,11 +35,15 @@ public class WeatherUpdaterService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        Subscription subscribe = mModel.updateWeather(true).subscribe(aLong -> {
+        Subscription subscribe = mModel.updateWeather().subscribe(aLong -> {
             Log.d(TAG, "updateWeather() called " + aLong);
-        }, Throwable::printStackTrace);
+            sendBroadcast(new Intent(WeatherUpdateReceiver.class.getName()));
+            stopSelf();
+        }, throwable -> {
+            throwable.printStackTrace();
+            Toast.makeText(this, R.string.error_weather_update_service, Toast.LENGTH_LONG).show();
+        });
         mCompositeSubscription.add(subscribe);
-
     }
 
     @Override

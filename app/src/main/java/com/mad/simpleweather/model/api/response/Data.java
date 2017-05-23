@@ -1,40 +1,33 @@
 
 package com.mad.simpleweather.model.api.response;
 
-import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+
+import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
 
 public class Data {
 
     @SerializedName("coord")
-    @Expose
     private Coordinate coord;
     @SerializedName("sys")
-    @Expose
     private Sys sys;
     @SerializedName("weather")
-    @Expose
     private java.util.List<Weather> weather = null;
     @SerializedName("main")
-    @Expose
     private Main main;
     @SerializedName("visibility")
-    @Expose
     private Integer visibility;
     @SerializedName("wind")
-    @Expose
     private Wind wind;
     @SerializedName("clouds")
-    @Expose
     private Clouds clouds;
     @SerializedName("dt")
-    @Expose
     private Integer dt;
     @SerializedName("id")
-    @Expose
+    @PrimaryKey
     private Integer id;
     @SerializedName("name")
-    @Expose
     private String name;
 
     public Coordinate getCoord() {

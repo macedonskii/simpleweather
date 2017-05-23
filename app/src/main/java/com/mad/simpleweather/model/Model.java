@@ -2,7 +2,10 @@ package com.mad.simpleweather.model;
 
 import android.support.annotation.Nullable;
 
+import com.mad.simpleweather.model.data.CityItem;
 import com.mad.simpleweather.model.data.CityWeather;
+
+import java.util.List;
 
 import rx.Observable;
 
@@ -27,7 +30,12 @@ public interface Model {
 
     /**
      * @return time to next update or 0 if data isn't updated!
-     * @param isImmediatelyUpdate - ignore last update time
      */
-    Observable<Long> updateWeather(boolean isImmediatelyUpdate);
+    Observable<Long> updateWeather();
+
+    /**
+     * @return get city list from string resources
+     */
+
+    Observable<List<CityItem>> getCityList();
 }

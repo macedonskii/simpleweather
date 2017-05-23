@@ -4,51 +4,75 @@ package com.mad.simpleweather.model.storage;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.annotation.Nullable;
+import android.support.annotation.UiThread;
 
-import com.google.gson.Gson;
 import com.mad.simpleweather.model.api.response.Data;
 import com.mad.simpleweather.model.api.response.WeatherResponse;
 import com.mad.simpleweather.model.data.CityWeather;
-import com.mad.simpleweather.model.data.containers.WeathersContainer;
 
-public class DatabaseImpl implements Database {
+import java.util.ArrayList;
+import java.util.List;
+
+import io.realm.Realm;
+
+public class
+DatabaseImpl implements Database {
     private static final String LAST_UPDATE_TIME = "TIME";
-    private static final String WEATHER = "WEATHER";
+    private static final String CITY = "CITY";
 
     private SharedPreferences mPreferences;
 
     public DatabaseImpl(Context context) {
-        mPreferences = context.getSharedPreferences("pref name", Context.MODE_PRIVATE);
+        mPreferences = context.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE);
     }
 
     @Override
     @Nullable
+    @UiThread
     public CityWeather getCurrentWeather() {
-        WeathersContainer weather = getWeather();
-        if (weather == null || weather.getCurrentWeather() == null) {
-            return null;
-        }
-        Data currentWeather = weather.getCurrentWeather();
-        return new CityWeather(String.format("%s in\n%s",currentWeather.getWeather().get(0).getDescription(),currentWeather.getName()),
-                currentWeather.getWeather().get(0).getIcon(),
-                currentWeather.getMain().getTempMin(),
-                currentWeather.getMain().getTempMax(),
-                currentWeather.getMain().getTemp()
-        );
+        Realm instance = Realm.getDefaultInstance();
+        final CityWeather[] currentWeather = new CityWeather[1];
+        instance.executeTransaction(realm -> {
+            CityWeather mId = realm.where(CityWeather.class).equalTo("mId", getCurrentCityId()).findFirst();
+            if (mId != null) {
+                currentWeather[0] = realm.copyFromRealm(mId);
+            }
+        });
+        instance.close();
+        return currentWeather[0];
     }
 
     @Override
     public void setWeather(WeatherResponse response) {
-        WeathersContainer weathersContainer = getWeather();
-        weathersContainer.setList(response.getList());
-        setWeather(weathersContainer);
+        List<CityWeather> list = new ArrayList<>();
+        for (Data data : response.getList()) {
+            list.add(new CityWeather(
+                    String.format("%s in\n%s", data.getWeather().get(0).getDescription(), data.getName()),
+                    data.getWeather().get(0).getIcon(),
+                    data.getMain().getTempMin(),
+                    data.getMain().getTempMax(),
+                    data.getMain().getTemp(),
+                    data.getId()
+            ));
+        }
+        setWeather(list);
+    }
+
+    private void setWeather(List<CityWeather> list) {
+        Realm instance = Realm.getDefaultInstance();
+        instance.executeTransaction(realm -> {
+            realm.copyToRealmOrUpdate(list);
+        });
+        instance.close();
     }
 
     @Override
     public void setCurrentCity(int cityId) {
-        WeathersContainer weathersContainer = getWeather();
-        weathersContainer.setId(cityId);
-        setWeather(weathersContainer);
+        mPreferences.edit().putInt(CITY, cityId).commit();
+    }
+
+    private int getCurrentCityId() {
+        return mPreferences.getInt(CITY, 709930);
     }
 
     @Override
@@ -61,14 +85,4 @@ public class DatabaseImpl implements Database {
         return mPreferences.getLong(LAST_UPDATE_TIME, 0);
     }
 
-    private WeathersContainer getWeather() {
-        Gson gson = new Gson();
-        String string = mPreferences.getString(WEATHER, "");
-        WeathersContainer weathersContainer = gson.fromJson(string, WeathersContainer.class);
-        return weathersContainer == null ? new WeathersContainer() : weathersContainer;
-    }
-    private void setWeather(WeathersContainer container) {
-        Gson gson = new Gson();
-        mPreferences.edit().putString(WEATHER, gson.toJson(container)).commit();
-    }
 }
