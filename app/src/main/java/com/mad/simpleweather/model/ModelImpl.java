@@ -16,8 +16,6 @@ import java.util.List;
 import javax.inject.Inject;
 
 import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
 public class ModelImpl implements Model {
 
@@ -54,8 +52,19 @@ public class ModelImpl implements Model {
     }
 
     @Override
-    public Observable<Long> updateWeather() {
-        return loadWeather().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+    public Observable<Boolean> updateWeather() {
+        StringBuilder str = new StringBuilder();
+        for (int city : mContext.getResources().getIntArray(R.array.cities_id)) {
+            str.append(city).append(",");
+        }
+        str.deleteCharAt(str.length() - 1);
+        return mApi.getWeather("metric", "366a16719c97c87cb1b3d62d04f1b0b4", str.toString()).map(asd -> {
+            if (!asd.isSuccessful()) {
+                return false;
+            }
+            mDatabase.setWeather(asd.body());
+            return true;
+        });
     }
 
     @Override
@@ -70,20 +79,4 @@ public class ModelImpl implements Model {
                 });
     }
 
-    private Observable<Long> loadWeather() {
-        StringBuilder str = new StringBuilder();
-        for (int city : mContext.getResources().getIntArray(R.array.cities_id)) {
-            str.append(city).append(",");
-        }
-        str.deleteCharAt(str.length() - 1);
-        return mApi.getWeather("metric", "366a16719c97c87cb1b3d62d04f1b0b4", str.toString()).map(asd -> {
-            long l = System.currentTimeMillis();
-            if (!asd.isSuccessful()) {
-                return l + 2 * MINUTE;
-            }
-            mDatabase.setWeather(asd.body());
-            mDatabase.setLastUpdateTime(l);
-            return l + TIME_TO_UPDATE;
-        });
-    }
 }

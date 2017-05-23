@@ -25,7 +25,6 @@ public class WeatherUpdaterService extends Service {
 
     @Inject
     Model mModel;
-
     CompositeSubscription mCompositeSubscription = new CompositeSubscription();
 
     public WeatherUpdaterService() {
@@ -37,13 +36,21 @@ public class WeatherUpdaterService extends Service {
         super.onCreate();
         Subscription subscribe = mModel.updateWeather().subscribe(aLong -> {
             Log.d(TAG, "updateWeather() called " + aLong);
-            sendBroadcast(new Intent(WeatherUpdateReceiver.class.getName()));
+            if (aLong) {
+                sendBroadcast(new Intent(WeatherUpdateReceiver.class.getName()));
+            }else{
+                onError();
+            }
             stopSelf();
         }, throwable -> {
             throwable.printStackTrace();
-            Toast.makeText(this, R.string.error_weather_update_service, Toast.LENGTH_LONG).show();
+            onError();
         });
         mCompositeSubscription.add(subscribe);
+    }
+
+    private void onError() {
+        Toast.makeText(this, R.string.error_weather_update_service, Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -54,7 +61,6 @@ public class WeatherUpdaterService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
-        // TODO: Return the communication channel to the service.
         throw new UnsupportedOperationException("Not yet implemented");
     }
 }

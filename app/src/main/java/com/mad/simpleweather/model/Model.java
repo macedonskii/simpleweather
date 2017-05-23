@@ -31,7 +31,7 @@ public interface Model {
     /**
      * @return time to next update or 0 if data isn't updated!
      */
-    Observable<Long> updateWeather();
+    Observable<Boolean> updateWeather();
 
     /**
      * @return get city list from string resources

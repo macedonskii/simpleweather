@@ -75,14 +75,4 @@ DatabaseImpl implements Database {
         return mPreferences.getInt(CITY, 709930);
     }
 
-    @Override
-    public void setLastUpdateTime(long l) {
-        mPreferences.edit().putLong(LAST_UPDATE_TIME, l).commit();
-    }
-
-    @Override
-    public long getLastUpdateTime() {
-        return mPreferences.getLong(LAST_UPDATE_TIME, 0);
-    }
-
 }
