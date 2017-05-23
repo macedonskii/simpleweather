@@ -40,15 +40,15 @@ public class App extends Application {
         SharedPreferences appPreferences = getSharedPreferences("AppPreferences", MODE_PRIVATE);
         if (appPreferences.getBoolean("first_start", true)) {
             AlarmManager manager = (AlarmManager) getSystemService(ALARM_SERVICE);
+            WeatherUpdaterService.startService(this);
 
             Calendar calendar = Calendar.getInstance();
-            calendar.setTimeInMillis(System.currentTimeMillis() + 1000);
+            calendar.setTimeInMillis(System.currentTimeMillis());
 
             Intent intent = new Intent(this, AlarmReceiver.class);
             PendingIntent broadcast = PendingIntent.getBroadcast(this, 0, intent, 0);
 
             manager.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),AlarmManager.INTERVAL_HALF_HOUR, broadcast);
-//            manager.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 1000 * 15, broadcast);
             appPreferences.edit().putBoolean("first_start", false).apply();
         }
     }
