@@ -16,6 +16,8 @@ import java.util.List;
 import javax.inject.Inject;
 
 import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 public class ModelImpl implements Model {
 
@@ -53,18 +55,20 @@ public class ModelImpl implements Model {
 
     @Override
     public Observable<Boolean> updateWeather() {
-        StringBuilder str = new StringBuilder();
-        for (int city : mContext.getResources().getIntArray(R.array.cities_id)) {
-            str.append(city).append(",");
-        }
-        str.deleteCharAt(str.length() - 1);
-        return mApi.getWeather("metric", "366a16719c97c87cb1b3d62d04f1b0b4", str.toString()).map(asd -> {
+        return Observable.just(null).map(o -> {
+            StringBuilder str = new StringBuilder();
+            for (int city : mContext.getResources().getIntArray(R.array.cities_id)) {
+                str.append(city).append(",");
+            }
+            str.deleteCharAt(str.length() - 1);
+            return str.toString();
+        }).flatMap(s -> mApi.getWeather("metric", "366a16719c97c87cb1b3d62d04f1b0b4", s)).map(asd -> {
             if (!asd.isSuccessful()) {
                 return false;
             }
             mDatabase.setWeather(asd.body());
             return true;
-        });
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
     }
 
     @Override

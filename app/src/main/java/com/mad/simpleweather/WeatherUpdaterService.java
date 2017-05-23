@@ -29,11 +29,13 @@ public class WeatherUpdaterService extends Service {
 
     public WeatherUpdaterService() {
         App.getGraph().inject(this);
+        Log.d(TAG, "WeatherUpdaterService: ");
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
+        Log.d(TAG, "onCreate: ");
         Subscription subscribe = mModel.updateWeather().subscribe(aLong -> {
             Log.d(TAG, "updateWeather() called " + aLong);
             if (aLong) {
@@ -55,6 +57,7 @@ public class WeatherUpdaterService extends Service {
 
     @Override
     public void onDestroy() {
+        Log.d(TAG, "onDestroy() called");
         mCompositeSubscription.clear();
         super.onDestroy();
     }
